@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>sanepick</title>
+  <style>
+    html, body {
+      font-family: 'Noto Sans', sans-serif;
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      background: #ffffff;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      body {
+        background-color: #191919;
+      }
+    }
+
+    .video-wrapper {
+      position: relative;
+      width: 100vw;
+      height: 100vh;
+      overflow: hidden;  /* 중요! 이미지 자르기 */
+      border-radius: 8px;
+    }
+    
+    .video-wrapper img {
+      position: absolute;
+      bottom: 0;               /* 이미지 하단을 wrapper 하단에 붙임 */
+      width: 100%;
+      height: auto;
+      min-height: 100vh;       /* 꽉 채우게 함 */
+      object-fit: cover;
+    }
+    
+
+    iframe {
+      width: 100vw;
+      height: 100vh;
+      border: none;
+      border-radius: 8px;
+    }
+
+    .overlay-text {
+      position: absolute;
+      top: 20%;
+      left: 20%;
+      transform: translate(-50%, -50%);
+      font-size: 15px;
+      color: white;
+      text-shadow: 0 0 5px white;
+      z-index: 2;
+      user-select: none;
+    }
+
+    .back-button {
+      position: absolute;
+      top: calc(20% + 30px); /* Playlist 아래로 일정 거리 */
+      left: 20%;
+      transform: translateX(-50%);
+      background-color: rgba(255, 255, 255, 0.2);
+      color: white;
+      font-size: 15px;
+      border: none;
+      padding: 8px 14px;
+      border-radius: 3px;
+      cursor: pointer;
+      z-index: 2;
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="video-wrapper" id="player">
+    <!-- Playlist 텍스트 -->
+    <div class="overlay-text">Playlist</div>
+
+    <!-- Back 버튼 -->
+    <button class="back-button" id="backBtn">Back</button>
+
+    <!-- 이미지 화면 -->
+    <div id="coverView">
+      <img
+        src="https://images.unsplash.com/photo-1509635022432-0220ac12960b?q=80&w=1708&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+        alt="cover"
+        id="coverImg">
+    </div>
+
+    <!-- 영상 화면 -->
+    <div id="videoView" style="display: none;">
+      <iframe id="youtubeFrame" src="" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+    </div>
+  </div>
+
+  <script>
+    const videoID = "2Q8HfOUcxxo";
+    const coverView = document.getElementById("coverView");
+    const videoView = document.getElementById("videoView");
+    const coverImg = document.getElementById("coverImg");
+    const youtubeFrame = document.getElementById("youtubeFrame");
+    const backBtn = document.getElementById("backBtn");
+
+    // 이미지 → 영상으로 전환
+    coverImg.addEventListener("click", () => {
+      youtubeFrame.src = `https://www.youtube.com/embed/${videoID}?autoplay=1&loop=1&playlist=${videoID}`;
+      coverView.style.display = "none";
+      videoView.style.display = "block";
+      backBtn.style.display = "inline-block";
+    });
+
+    // Back 버튼 → 이미지로 복귀
+    backBtn.addEventListener("click", () => {
+      youtubeFrame.src = "";
+      coverView.style.display = "block";
+      videoView.style.display = "none";
+      backBtn.style.display = "none";
+    });
+  </script>
+</body>
+</html>
