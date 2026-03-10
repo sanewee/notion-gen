@@ -1,39 +1,224 @@
-<div id="clock">
-  <div class="time">
-    <span id="hour"></span><span class="unit"> h</span>
-  </div>
-  <div class="time">
-    <span id="minute"></span><span class="unit"> m</span>
-  </div>
-</div>
-
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>7 Segment Clock</title>
 <style>
-#clock{
-  font-family: 'Pretendard', sans-serif;
-  font-size: 40px;
-  font-weight: 600;
-  color: #333;
-  line-height: 1.1;
-}
+  :root{
+    --digit-w: 80px;
+    --digit-h: 120px;
+    --seg-thick: 14px;
+    --seg-len: 50px;
+    --gap-y: 14px;
+    --gap-x: 10px;
+    --digit-color: #000;
+    --off-opacity: 0.08;
+  }
+/*
+  @media (prefers-color-scheme: dark){
+    :root{
+      --digit-color: #000;
+      --off-opacity: 0.12;
+    }
+  }
+*/
+  *{
+    box-sizing: border-box;
+  }
 
-.unit{
-  font-size: 20px;
-  margin-left: 2px;
-  color: #888;
-}
+  html, body{
+    margin: 0;
+    width: 100%;
+    height: 100%;
+    background: transparent;
+  }
+
+  body{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-family: sans-serif;
+  }
+
+  #clock{
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    background: transparent;
+  }
+
+  .row{
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+  }
+
+  .digit{
+    position: relative;
+    width: var(--digit-w);
+    height: var(--digit-h);
+  }
+
+  .seg{
+    position: absolute;
+    background: var(--digit-color);
+    opacity: var(--off-opacity);
+    transition: opacity 0.15s ease;
+    border-radius: 3px;
+  }
+
+  .seg.on{
+    opacity: 1;
+  }
+
+  /* a */
+  .seg.a{
+    top: 0;
+    left: 50%;
+    width: var(--seg-len);
+    height: var(--seg-thick);
+    transform: translateX(-50%);
+  }
+
+  /* d */
+  .seg.d{
+    bottom: 0;
+    left: 50%;
+    width: var(--seg-len);
+    height: var(--seg-thick);
+    transform: translateX(-50%);
+  }
+
+  /* g */
+  .seg.g{
+    top: 50%;
+    left: 50%;
+    width: var(--seg-len);
+    height: var(--seg-thick);
+    transform: translate(-50%, -50%);
+  }
+
+  /* f */
+  .seg.f{
+    top: 8px;
+    left: 0;
+    width: var(--seg-thick);
+    height: 46px;
+  }
+
+  /* b */
+  .seg.b{
+    top: 8px;
+    right: 0;
+    width: var(--seg-thick);
+    height: 46px;
+  }
+
+  /* e */
+  .seg.e{
+    bottom: 8px;
+    left: 0;
+    width: var(--seg-thick);
+    height: 46px;
+  }
+
+  /* c */
+  .seg.c{
+    bottom: 8px;
+    right: 0;
+    width: var(--seg-thick);
+    height: 46px;
+  }
+
+  @media (max-width: 480px){
+    :root{
+      --digit-w: 56px;
+      --digit-h: 96px;
+      --seg-thick: 8px;
+      --seg-len: 34px;
+    }
+
+    #clock{
+      gap: 8px;
+    }
+
+    .row{
+      gap: 6px;
+    }
+  }
 </style>
+</head>
+<body>
+  <div id="clock">
+    <div class="row" id="hour-row"></div>
+    <div class="row" id="minute-row"></div>
+    <div class="row" id="second-row"></div>
+  </div>
 
 <script>
-function updateClock(){
-  const now = new Date();
-  const hour = String(now.getHours()).padStart(2,'0');
-  const minute = String(now.getMinutes()).padStart(2,'0');
+  const digitMap = {
+    "0": ["a","b","c","d","e","f"],
+    "1": ["b","c"],
+    "2": ["a","b","g","e","d"],
+    "3": ["a","b","c","d","g"],
+    "4": ["f","g","b","c"],
+    "5": ["a","f","g","c","d"],
+    "6": ["a","f","g","e","c","d"],
+    "7": ["a","b","c"],
+    "8": ["a","b","c","d","e","f","g"],
+    "9": ["a","b","c","d","f","g"]
+  };
 
-  document.getElementById("hour").textContent = hour;
-  document.getElementById("minute").textContent = minute;
-}
+  function createDigit() {
+    const digit = document.createElement("div");
+    digit.className = "digit";
 
-updateClock();
-setInterval(updateClock, 1000);
+    ["a","b","c","d","e","f","g"].forEach(name => {
+      const seg = document.createElement("div");
+      seg.className = `seg ${name}`;
+      digit.appendChild(seg);
+    });
 
+    return digit;
+  }
+
+  function createTwoDigits(containerId) {
+    const row = document.getElementById(containerId);
+    const d1 = createDigit();
+    const d2 = createDigit();
+    row.appendChild(d1);
+    row.appendChild(d2);
+    return [d1, d2];
+  }
+
+  const hourDigits = createTwoDigits("hour-row");
+  const minuteDigits = createTwoDigits("minute-row");
+  const secondDigits = createTwoDigits("second-row");
+
+  function renderDigit(el, numChar) {
+    const active = digitMap[numChar] || [];
+    el.querySelectorAll(".seg").forEach(seg => {
+      const segName = [...seg.classList].find(c => "abcdefg".includes(c));
+      seg.classList.toggle("on", active.includes(segName));
+    });
+  }
+
+  function renderTwoDigits(digitEls, value) {
+    const str = String(value).padStart(2, "0");
+    renderDigit(digitEls[0], str[0]);
+    renderDigit(digitEls[1], str[1]);
+  }
+
+  function updateClock() {
+    const now = new Date();
+    renderTwoDigits(hourDigits, now.getHours());
+    renderTwoDigits(minuteDigits, now.getMinutes());
+    renderTwoDigits(secondDigits, now.getSeconds());
+  }
+
+  updateClock();
+  setInterval(updateClock, 1000);
 </script>
+</body>
+</html>
