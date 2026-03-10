@@ -1,0 +1,38 @@
+<div id="clock">
+  <div class="time">
+    <span id="hour"></span><span class="unit">시</span>
+  </div>
+  <div class="time">
+    <span id="minute"></span><span class="unit">분</span>
+  </div>
+</div>
+
+<style>
+#clock{
+  font-family: 'Pretendard', sans-serif;
+  font-size: 50px;
+  font-weight: 600;
+  color: #333;
+  line-height: 1.1;
+}
+
+.unit{
+  font-size: 30px;
+  margin-left: 2px;
+  color: #888;
+}
+</style>
+
+<script>
+function updateClock(){
+  const now = new Date();
+  const hour = String(now.getHours()).padStart(2,'0');
+  const minute = String(now.getMinutes()).padStart(2,'0');
+
+  document.getElementById("hour").textContent = hour;
+  document.getElementById("minute").textContent = minute;
+}
+
+updateClock();
+setInterval(updateClock, 1000);
+</script>
