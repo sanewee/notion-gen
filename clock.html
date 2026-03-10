@@ -1,23 +1,23 @@
 <div id="clock">
   <div class="time">
-    <span id="hour"></span><span class="unit">시</span>
+    <span id="hour"></span><span class="unit"> h</span>
   </div>
   <div class="time">
-    <span id="minute"></span><span class="unit">분</span>
+    <span id="minute"></span><span class="unit"> m</span>
   </div>
 </div>
 
 <style>
 #clock{
   font-family: 'Pretendard', sans-serif;
-  font-size: 50px;
+  font-size: 40px;
   font-weight: 600;
   color: #333;
   line-height: 1.1;
 }
 
 .unit{
-  font-size: 30px;
+  font-size: 20px;
   margin-left: 2px;
   color: #888;
 }
@@ -35,4 +35,5 @@ function updateClock(){
 
 updateClock();
 setInterval(updateClock, 1000);
+
 </script>
