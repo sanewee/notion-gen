@@ -35,7 +35,7 @@ async function run() {
   const dinner = rows.find(r => r.MMEAL_SC_NM === "석식");
 
   const output = {
-    date: `${today.getMonth() + 1}/${today.getDate()}`,
+    date: `${today.getFullYear()}년 ${today.getMonth() + 1}월 ${today.getDate()}일`,
     breakfast: breakfast ? clean(breakfast.DDISH_NM) : "-",
     lunch: lunch ? clean(lunch.DDISH_NM) : "-",
     dinner: dinner ? clean(dinner.DDISH_NM) : "-"
