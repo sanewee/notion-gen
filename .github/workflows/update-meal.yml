@@ -1,0 +1,32 @@
+name: update meal
+
+on:
+  schedule:
+    - cron: '0 22 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 24
+
+      - run: node generate-meal.js
+        env:
+          NEIS_KEY: ${{ secrets.NEIS_KEY }}
+
+      - name: commit
+        run: |
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+          git add meal-sasa.json
+          git commit -m "update meal" || exit 0
+          git push
