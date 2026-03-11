@@ -17,24 +17,26 @@ body{
     color:white;
 }
 
-/* 전체 박스 */
+/* 전체 영역 */
 .clock-box{
+    width:95vw;
     text-align:center;
 }
 
 /* 시간 */
 .time{
     font-family: Georgia, "Times New Roman", serif;
-    font-size:90px;
     font-weight:900;
     font-style:italic;
-    letter-spacing:2px;
+    font-size:14vw;
+    letter-spacing:0.05em;
+    white-space:nowrap;
 }
 
 /* 날짜 */
 .date{
-    margin-top:20px;
-    font-size:24px;
+    margin-top:1vh;
+    font-size:2.2vw;
     font-family: Georgia, "Times New Roman", serif;
     font-style:italic;
 }
@@ -64,13 +66,11 @@ function updateClock(){
     document.getElementById("time").textContent =
         `${h}:${m}:${s}`
 
-
     const year = now.getFullYear()
     const month = now.getMonth()+1
     const day = now.getDate()
 
     const weekday = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"]
-
     const w = weekday[now.getDay()]
 
     document.getElementById("date").textContent =
@@ -78,7 +78,6 @@ function updateClock(){
 }
 
 updateClock()
-
 setInterval(updateClock,1000)
 
 </script>
