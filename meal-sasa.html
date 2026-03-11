@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<title>Meal</title>
+
+<style>
+html, body{
+margin:0;
+padding:0;
+font-family:sans-serif;
+font-size:clamp(12px,1.2vw,18px);
+background:#fff;
+color:#000;
+}
+
+.table-wrap{
+border:1px solid #EBEBE9;
+border-radius:8px;
+overflow:hidden;
+}
+
+table{
+border-collapse:collapse;
+width:100%;
+table-layout:fixed;
+}
+
+th,td{
+border:1px solid #EBEBE9;
+padding:6px 8px;
+text-align:center;
+vertical-align:top;
+word-break:break-word;
+background:#fff;
+}
+
+th{
+font-weight:600;
+background:#F8F8F7;
+}
+
+@media (prefers-color-scheme: dark){
+
+html,body{
+background:#191919;
+color:#E9E9E7;
+}
+
+.table-wrap{
+border-color:#e9e9e7;
+}
+
+th,td{
+background:#191919 !important;
+color:#eee !important;
+border-color:#e9e9e7 !important;
+}
+
+th{
+background:#2f2f2f !important;
+color:#fff !important;
+}
+
+}
+</style>
+
+</head>
+
+<body>
+
+<div class="table-wrap">
+<table id="mealTable">
+
+<thead>
+<tr id="dateRow"></tr>
+</thead>
+
+<tbody>
+<tr id="lunchRow"></tr>
+<tr id="dinnerRow"></tr>
+</tbody>
+
+</table>
+</div>
+
+<script>
+
+fetch("meal-sasa.json")
+.then(res=>res.json())
+.then(data=>{
+
+const dateRow=document.getElementById("dateRow")
+const lunchRow=document.getElementById("lunchRow")
+const dinnerRow=document.getElementById("dinnerRow")
+
+dateRow.innerHTML=`<th>${data.date}</th>`
+
+lunchRow.innerHTML=`<td>${data.lunch||"-"}</td>`
+dinnerRow.innerHTML=`<td>${data.dinner||"-"}</td>`
+
+})
+
+.catch(()=>{
+document.getElementById("mealTable").innerHTML
+=`<tr><td>데이터를 불러올 수 없습니다</td></tr>`
+})
+
+</script>
+
+</body>
+</html>
