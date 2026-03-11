@@ -1,56 +1,47 @@
-const fs = require("fs")
+const fs = require("fs");
 
-const office="I10"
-const school="9300181"
+const office = "I10";
+const school = "9300181";
 
-const key=process.env.NEIS_KEY
+const key = process.env.NEIS_KEY;
 
-function ymd(d){
-
-const yyyy=d.getFullYear()
-const mm=String(d.getMonth()+1).padStart(2,"0")
-const dd=String(d.getDate()).padStart(2,"0")
-
-return `${yyyy}${mm}${dd}`
-
+function ymd(d) {
+  const yyyy = d.getFullYear();
+  const mm = String(d.getMonth() + 1).padStart(2, "0");
+  const dd = String(d.getDate()).padStart(2, "0");
+  return `${yyyy}${mm}${dd}`;
 }
 
-const today=new Date()
-const todayYMD=ymd(today)
+const today = new Date();
+const todayYMD = ymd(today);
 
-async function run(){
+async function run() {
+  const url =
+    `https://open.neis.go.kr/hub/mealServiceDietInfo?KEY=${key}&Type=json&pIndex=1&pSize=100&ATPT_OFCDC_SC_CODE=${office}&SD_SCHUL_CODE=${school}&MLSV_FROM_YMD=${todayYMD}&MLSV_TO_YMD=${todayYMD}`;
 
-const url=
-`https://open.neis.go.kr/hub/mealServiceDietInfo?KEY=${key}&Type=json&pIndex=1&pSize=100&ATPT_OFCDC_SC_CODE=${office}&SD_SCHUL_CODE=${school}&MLSV_FROM_YMD=${todayYMD}&MLSV_TO_YMD=${todayYMD}`
+  const res = await fetch(url);
+  const json = await res.json();
 
-const res=await fetch(url)
+  const rows = json?.mealServiceDietInfo?.[1]?.row || [];
 
-const json=await res.json()
+  function clean(text) {
+    return text
+      .replace(/\([^\)]*\)/g, "")
+      .replace(/<br\/?>/g, "<br>");
+  }
 
-const rows=json?.mealServiceDietInfo?.[1]?.row||[]
+  const breakfast = rows.find(r => r.MMEAL_SC_NM === "조식");
+  const lunch = rows.find(r => r.MMEAL_SC_NM === "중식");
+  const dinner = rows.find(r => r.MMEAL_SC_NM === "석식");
 
-function clean(text){
+  const output = {
+    date: `${today.getMonth() + 1}/${today.getDate()}`,
+    breakfast: breakfast ? clean(breakfast.DDISH_NM) : "-",
+    lunch: lunch ? clean(lunch.DDISH_NM) : "-",
+    dinner: dinner ? clean(dinner.DDISH_NM) : "-"
+  };
 
-return text
-.replace(/\([^\)]*\)/g,"")
-.replace(/<br\/?>/g,"<br>")
-
+  fs.writeFileSync("meal-sasa.json", JSON.stringify(output, null, 2));
 }
 
-const lunch=rows.find(r=>r.MMEAL_SC_NM==="중식")
-const dinner=rows.find(r=>r.MMEAL_SC_NM==="석식")
-
-const output={
-
-date:`${today.getMonth()+1}/${today.getDate()}`,
-
-lunch:lunch?clean(lunch.DDISH_NM):"-",
-dinner:dinner?clean(dinner.DDISH_NM):"-"
-
-}
-
-fs.writeFileSync("meal-sasa.json",JSON.stringify(output,null,2))
-
-}
-
-run()
+run();
