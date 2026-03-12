@@ -125,7 +125,6 @@
         return res.json();
       })
       .then(data => {
-        document.getElementById("dateCell").textContent = data.date || "";
         document.getElementById("breakfastCell").innerHTML = formatMeal(data.breakfast);
         document.getElementById("lunchCell").innerHTML = formatMeal(data.lunch);
         document.getElementById("dinnerCell").innerHTML = formatMeal(data.dinner);
