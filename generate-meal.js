@@ -5,15 +5,26 @@ const school = "9300181";
 
 const key = process.env.NEIS_KEY;
 
-function ymd(d) {
-  const yyyy = d.getFullYear();
-  const mm = String(d.getMonth() + 1).padStart(2, "0");
-  const dd = String(d.getDate()).padStart(2, "0");
-  return `${yyyy}${mm}${dd}`;
+function getKoreanDateParts() {
+  const now = new Date();
+
+  const formatter = new Intl.DateTimeFormat("en-CA", {
+    timeZone: "Asia/Seoul",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit"
+  });
+
+  const parts = formatter.formatToParts(now);
+  const year = parts.find(p => p.type === "year").value;
+  const month = parts.find(p => p.type === "month").value;
+  const day = parts.find(p => p.type === "day").value;
+
+  return { year, month, day };
 }
 
-const today = new Date();
-const todayYMD = ymd(today);
+const { year, month, day } = getKoreanDateParts();
+const todayYMD = `${year}${month}${day}`;
 
 async function run() {
   const url =
@@ -35,7 +46,7 @@ async function run() {
   const dinner = rows.find(r => r.MMEAL_SC_NM === "석식");
 
   const output = {
-    date: `${today.getFullYear()}년 ${today.getMonth() + 1}월 ${today.getDate()}일`,
+    date: `${year}년 ${Number(month)}월 ${Number(day)}일`,
     breakfast: breakfast ? clean(breakfast.DDISH_NM) : "-",
     lunch: lunch ? clean(lunch.DDISH_NM) : "-",
     dinner: dinner ? clean(dinner.DDISH_NM) : "-"
