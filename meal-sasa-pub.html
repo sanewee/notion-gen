@@ -1,3 +1,6 @@
+물론. 아래가 수정된 전체 코드야.
+
+```html
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -29,12 +32,11 @@
     .table-wrap {
       width: 100%;
       box-sizing: border-box;
-      border: 5px solid #ffffff
+      border: 5px solid #ffffff;
       overflow-x: auto;
       font-size: clamp(12px, 1.6vw, 26px);
-
-      border-radius: 50px;   /* 추가 */
-      overflow: hidden;      /* 추가 */
+      border-radius: 50px;
+      overflow: hidden;
     }
 
     table {
@@ -75,6 +77,32 @@
       display: block;
       margin: 0.12em 0;
     }
+
+    .footer-ui {
+      position: fixed;
+      right: 12px;
+      bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12px;
+      color: #555555;
+      z-index: 10;
+    }
+
+    #refreshButton {
+      border: 0;
+      background: transparent;
+      color: #555555;
+      font-size: 14px;
+      line-height: 1;
+      padding: 2px 4px;
+      cursor: pointer;
+    }
+
+    #refreshButton:hover {
+      opacity: 0.7;
+    }
   </style>
 </head>
 <body>
@@ -97,6 +125,11 @@
     </table>
   </div>
 
+  <div class="footer-ui">
+    <span id="dateText"></span>
+    <button id="refreshButton" type="button" aria-label="새로고침">🔄</button>
+  </div>
+
   <script>
     function formatMeal(text) {
       if (!text || text === "-") return "-";
@@ -105,6 +138,23 @@
         .map(item => `<span class="meal-item">${item.trim()}</span>`)
         .join("");
     }
+
+    function formatDate(dateText) {
+      if (!dateText) return "";
+
+      const match = dateText.match(/(\d+)년\s*(\d+)월\s*(\d+)일/);
+      if (!match) return dateText;
+
+      const year = match[1];
+      const month = match[2].padStart(2, "0");
+      const day = match[3].padStart(2, "0");
+
+      return `${year}/${month}/${day}`;
+    }
+
+    document.getElementById("refreshButton").addEventListener("click", () => {
+      location.reload();
+    });
 
     fetch("./meal-sasa.json")
       .then(res => {
@@ -117,6 +167,7 @@
         document.getElementById("breakfastCell").innerHTML = formatMeal(data.breakfast);
         document.getElementById("lunchCell").innerHTML = formatMeal(data.lunch);
         document.getElementById("dinnerCell").innerHTML = formatMeal(data.dinner);
+        document.getElementById("dateText").textContent = formatDate(data.date);
       })
       .catch(err => {
         console.error("JSON 불러오기 실패:", err);
@@ -126,3 +177,4 @@
   </script>
 </body>
 </html>
+```
